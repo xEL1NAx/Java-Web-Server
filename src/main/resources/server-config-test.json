@@ -1,0 +1,82 @@
+{
+  "bindAddress": "0.0.0.0",
+  "port": 18080,
+  "httpsEnabled": true,
+  "httpsPort": 18443,
+  "workerThreads": 8,
+  "selectorTimeoutMillis": 500,
+  "keepAliveTimeoutMillis": 15000,
+  "connectionIdleTimeoutMillis": 30000,
+  "requestHeaderLimitBytes": 32768,
+  "maxBodySizeBytes": 4194304,
+  "readBufferSize": 16384,
+  "chunkedThresholdBytes": 131072,
+  "compressionMinBytes": 512,
+  "staticCacheMaxBytes": 33554432,
+  "staticCacheMaxEntries": 256,
+  "accessLogPath": "../../../logs/access.log",
+  "errorLogPath": "../../../logs/error.log",
+  "tls": {
+    "keystorePath": "../../../keystore.p12",
+    "keystorePassword": "changeit",
+    "keyPassword": "changeit",
+    "keystoreType": "PKCS12"
+  },
+  "rateLimit": {
+    "enabled": true,
+    "capacity": 100,
+    "refillTokens": 100,
+    "refillIntervalMillis": 1000
+  },
+  "access": {
+    "allowCidrs": [],
+    "denyCidrs": []
+  },
+  "hosts": [
+    {
+      "serverName": "localhost",
+      "aliases": [
+        "127.0.0.1"
+      ],
+      "root": "www",
+      "directoryListing": false,
+      "indexFiles": [
+        "index.html",
+        "index.htm"
+      ],
+      "basicAuthUser": null,
+      "basicAuthPassword": null,
+      "websocketPaths": [
+        "/ws"
+      ],
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/health",
+          "type": "literal",
+          "match": "exact",
+          "responseText": "OK",
+          "contentType": "text/plain; charset=utf-8",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/hello",
+          "type": "literal",
+          "match": "exact",
+          "responseText": "Hello from the Java web server.",
+          "contentType": "text/plain; charset=utf-8",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/redirect-me",
+          "type": "redirect",
+          "match": "exact",
+          "location": "/",
+          "status": 302
+        }
+      ]
+    }
+  ]
+}
