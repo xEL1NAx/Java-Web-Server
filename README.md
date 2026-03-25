@@ -116,13 +116,29 @@ javac \
 
 ## Run
 
-### Option 1: script
+### Option 1: one Java command (compiles + runs)
+
+```bash
+java \
+  --add-exports java.net.http/jdk.internal.net.http.hpack=ALL-UNNAMED \
+  Launcher.java
+```
+
+Optional custom config path:
+
+```bash
+java \
+  --add-exports java.net.http/jdk.internal.net.http.hpack=ALL-UNNAMED \
+  Launcher.java src/main/resources/server-config.json
+```
+
+### Option 2: script
 
 ```bash
 ./run.sh
 ```
 
-### Option 2: java directly
+### Option 3: java directly from compiled classes
 
 ```bash
 java \
@@ -130,7 +146,6 @@ java \
   -cp out \
   server.Main src/main/resources/server-config.json
 ```
-
 ## Default Config
 
 The bundled config starts:
