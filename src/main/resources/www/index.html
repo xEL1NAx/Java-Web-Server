@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Java Web Server</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; }
+    code { background: #f3f3f3; padding: 0.15rem 0.35rem; border-radius: 0.3rem; }
+    .box { border: 1px solid #ddd; border-radius: 12px; padding: 1rem; margin: 1rem 0; }
+    button { padding: 0.6rem 1rem; cursor: pointer; }
+    #log { white-space: pre-wrap; font-family: ui-monospace, monospace; background: #111; color: #eee; padding: 1rem; border-radius: 12px; min-height: 8rem; }
+  </style>
+</head>
+<body>
+  <h1>Java Web Server</h1>
+  <p>This page is served from the built-in static file handler.</p>
+
+  <div class="box">
+    <h2>Endpoints</h2>
+    <ul>
+      <li><a href="/health"><code>/health</code></a></li>
+      <li><a href="/hello"><code>/hello</code></a></li>
+      <li><a href="/redirect-me"><code>/redirect-me</code></a></li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <h2>WebSocket echo demo</h2>
+    <button id="connect">Connect</button>
+    <button id="send">Send message</button>
+    <div id="log"></div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
