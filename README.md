@@ -154,36 +154,6 @@ Create your own PKCS12 keystore:
 
 Then update `src/main/resources/server-config.json` if you want different passwords or file names.
 
-
-## Windows / PowerShell notes
-
-PowerShell does **not** treat a URL by itself as a command, so this will fail:
-
-```powershell
-https://localhost:8443/health
-```
-
-Also, in PowerShell `curl` is usually an alias for `Invoke-WebRequest`, which validates certificates and will reject the included self-signed demo certificate.
-
-Use one of these instead:
-
-```powershell
-# HTTP
-curl.exe http://localhost:8080/health
-
-# HTTPS with the demo self-signed cert
-curl.exe -k https://localhost:8443/health
-
-# HTTP/2 over HTTPS
-curl.exe -k --http2 https://localhost:8443/health
-```
-
-If you want to stay inside PowerShell's built-in web cmdlets, use:
-
-```powershell
-Invoke-WebRequest https://localhost:8443/health -SkipCertificateCheck
-```
-
 ## Test it
 
 HTTP/1.1:
