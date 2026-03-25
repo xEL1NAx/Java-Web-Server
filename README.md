@@ -1,4 +1,4 @@
-﻿# Java Web Server Project
+# Java Web Server Project
 
 This project is a from-scratch Java web server inspired by nginx/Apache-style features.
 
