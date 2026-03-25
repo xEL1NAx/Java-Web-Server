@@ -218,10 +218,6 @@ then the server will return the `.br` file when the client advertises Brotli sup
   - `basicAuthUser`
   - `basicAuthPassword`
 
-## Caveats
-
-This is a serious learning/demo project, but it is still not a drop-in replacement for nginx, Apache, Caddy, Jetty, Undertow, or Netty in production.
-
 
 ## Windows quick start
 
