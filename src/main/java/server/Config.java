@@ -53,6 +53,11 @@ public final class Config {
         public String root = "src/main/resources/www";
         public boolean directoryListing = false;
         public List<String> indexFiles = List.of("index.html", "index.htm");
+        public boolean phpEnabled = false;
+        public String phpCgiPath = "php-cgi";
+        public String phpIniPath = null;
+        public long phpCgiTimeoutMillis = 15_000;
+        public int phpCgiMaxOutputBytes = 8 * 1024 * 1024;
         public String proxyPass = null;
         public boolean trustXForwardedFor = false;
         public String basicAuthUser = null;
@@ -146,6 +151,13 @@ public final class Config {
                 host.directoryListing = bool(hostMap, "directoryListing", host.directoryListing);
                 List<String> idx = stringList(hostMap.get("indexFiles"));
                 if (!idx.isEmpty()) host.indexFiles = idx;
+                host.phpEnabled = bool(hostMap, "phpEnabled", host.phpEnabled);
+                host.phpCgiPath = str(hostMap, "phpCgiPath", host.phpCgiPath);
+                host.phpIniPath = nullableResolvedPath(baseDir, hostMap.get("phpIniPath"));
+                host.phpCgiTimeoutMillis = longValue(hostMap, "phpCgiTimeoutMillis", host.phpCgiTimeoutMillis);
+                host.phpCgiMaxOutputBytes = integer(hostMap, "phpCgiMaxOutputBytes", host.phpCgiMaxOutputBytes);
+                if (host.phpCgiTimeoutMillis < 1) host.phpCgiTimeoutMillis = 1;
+                if (host.phpCgiMaxOutputBytes < 1024) host.phpCgiMaxOutputBytes = 1024;
                 host.proxyPass = nullableString(hostMap.get("proxyPass"));
                 host.trustXForwardedFor = bool(hostMap, "trustXForwardedFor", host.trustXForwardedFor);
                 host.basicAuthUser = nullableString(hostMap.get("basicAuthUser"));
@@ -232,7 +244,10 @@ public final class Config {
     }
 
     private static String nullableResolvedPath(Path baseDir, Object value) {
-        return value == null ? null : resolvePath(baseDir, String.valueOf(value));
+        if (value == null) return null;
+        String text = String.valueOf(value).trim();
+        if (text.isEmpty()) return null;
+        return resolvePath(baseDir, text);
     }
 
     private static List<String> stringList(Object value) {

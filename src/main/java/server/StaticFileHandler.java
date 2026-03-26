@@ -10,16 +10,16 @@ import java.util.stream.Collectors;
 public final class StaticFileHandler {
     private final StaticFileCache cache;
     private final Config config;
+    private final PhpCgiHandler phpCgiHandler;
 
     public StaticFileHandler(Config config) {
         this.config = config;
         this.cache = new StaticFileCache(config.staticCacheMaxBytes, config.staticCacheMaxEntries);
+        this.phpCgiHandler = new PhpCgiHandler();
     }
 
     public HttpResponse handle(HttpRequest request, RequestContext context) throws Exception {
-        if (!request.method.equals("GET") && !request.method.equals("HEAD")) {
-            return HttpResponse.text(405, "Method Not Allowed").header("Allow", "GET, HEAD");
-        }
+        boolean staticMethod = request.method.equals("GET") || request.method.equals("HEAD");
 
         Path root = Path.of(context.host.root).normalize().toAbsolutePath();
         String requestPath = Util.sanitizeWebPath(request.path);
@@ -38,6 +38,9 @@ public final class StaticFileHandler {
                 }
             }
             if (Files.isDirectory(resolved)) {
+                if (!staticMethod) {
+                    return HttpResponse.text(405, "Method Not Allowed").header("Allow", "GET, HEAD");
+                }
                 if (!context.host.directoryListing) return HttpResponse.text(403, "Directory listing is disabled");
                 return directoryListing(requestPath, resolved, request.method.equals("HEAD"));
             }
@@ -45,6 +48,18 @@ public final class StaticFileHandler {
 
         if (!Files.exists(resolved) || !Files.isRegularFile(resolved)) {
             return HttpResponse.text(404, "Not Found");
+        }
+
+        if (isPhpFile(resolved)) {
+            if (!context.host.phpEnabled) {
+                return HttpResponse.text(404, "Not Found");
+            }
+            String scriptName = toWebPath(root, resolved);
+            return phpCgiHandler.handle(request, context, root, resolved, scriptName);
+        }
+
+        if (!staticMethod) {
+            return HttpResponse.text(405, "Method Not Allowed").header("Allow", "GET, HEAD");
         }
 
         StaticFileCache.Entry entry = load(root, resolved);
@@ -139,6 +154,17 @@ public final class StaticFileHandler {
         StaticFileCache.Entry entry = new StaticFileCache.Entry(body, gzip, br, contentType, lastModified, "\"" + etag + "\"", false);
         cache.put(key, entry);
         return entry;
+    }
+
+    private static boolean isPhpFile(Path path) {
+        Path fileName = path.getFileName();
+        if (fileName == null) return false;
+        return fileName.toString().toLowerCase(Locale.ROOT).endsWith(".php");
+    }
+
+    private static String toWebPath(Path root, Path file) {
+        String rel = root.relativize(file).toString().replace('\\', '/');
+        return rel.startsWith("/") ? rel : "/" + rel;
     }
 
     private static String sha1Hex(byte[] bytes) throws Exception {

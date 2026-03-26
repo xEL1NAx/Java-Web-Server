@@ -12,6 +12,7 @@ Implemented in this project:
 - HTTP/1.1 request parsing
 - routing
 - static file serving
+- PHP CGI execution (`php-cgi`)
 - basic response generation
 - keep-alive
 - NIO event loop for HTTP/1.1
@@ -81,6 +82,7 @@ src/main/java/server/
   HttpResponse.java
   Router.java
   StaticFileHandler.java
+  PhpCgiHandler.java
   ReverseProxyHandler.java
   TlsServer.java
   Http2Connection.java
@@ -198,6 +200,29 @@ The sample config contains:
 - `GET /redirect-me` -> redirects to `/`
 - `/ws` -> WebSocket echo endpoint
 - static files from `src/main/resources/www`
+
+## PHP Support (CGI)
+
+PHP execution is available per host through `php-cgi`.
+
+Example host settings:
+
+```json
+{
+  "phpEnabled": true,
+  "phpCgiPath": "php-cgi",
+  "phpIniPath": null,
+  "phpCgiTimeoutMillis": 15000,
+  "phpCgiMaxOutputBytes": 8388608,
+  "indexFiles": ["index.php", "index.html", "index.htm"]
+}
+```
+
+Notes:
+
+- `.php` files are executed via CGI when `phpEnabled` is `true`
+- `.php` files return `404` when `phpEnabled` is `false` (source is not served)
+- on Windows, `phpCgiPath` is often `php-cgi.exe` or an absolute path to it
 
 ## Reverse Proxy
 

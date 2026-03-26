@@ -41,9 +41,15 @@
       "root": "www",
       "directoryListing": false,
       "indexFiles": [
+        "index.php",
         "index.html",
         "index.htm"
       ],
+      "phpEnabled": false,
+      "phpCgiPath": "php-cgi",
+      "phpIniPath": null,
+      "phpCgiTimeoutMillis": 15000,
+      "phpCgiMaxOutputBytes": 8388608,
       "basicAuthUser": null,
       "basicAuthPassword": null,
       "websocketPaths": [
